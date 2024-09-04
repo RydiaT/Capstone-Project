@@ -9,6 +9,9 @@ public class main {
         // Set default close operation (exit the application when the window is closed)
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        frame.addMouseListener(panel);
+        frame.addMouseMotionListener(panel);
+
         frame.add(panel);
 
         // Set the window size (width x height)

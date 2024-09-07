@@ -11,6 +11,7 @@ public class main {
 
         frame.addMouseListener(panel);
         frame.addMouseMotionListener(panel);
+        frame.setResizable(false);
 
         frame.add(panel);
 

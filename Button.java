@@ -4,33 +4,34 @@ public class Button {
     private Graphics2D g;
     private int width, height;
     public int x, y;
-    private Color color, mouseOverColor, clickedColor;
+    private int aX, aY;
+    private Color color, mouseOverColor, clickedColor, textColor;
     private String text;
+    private int baseFontSize;
 
-    public Button(int width, int height, int x, int y, Color color, String text){
+    public Button(int width, int height, int x, int y, Color color, String text, int fontSize){
         this.width = width;
         this.height = height;
         this.x = x;
         this.y = y;
         this.color = color;
         this.text = text;
+        this.baseFontSize = fontSize;
     }
 
     public void setGraphics(Graphics2D g){
         this.g = g;
-        g.setFont(new Font("Comfortaa", Font.PLAIN, 32));
+    }
+
+    private void setFontSize(int size) {
+        g.setFont(new Font("Comfortaa", Font.PLAIN, size));
     }
 
     /**
      * Renders the button. X and Y is top left corner. Mouse X and Y are for colors.
      */
     public void draw(int mx, int my, boolean click) {
-        // Get the FontMetrics for the current font
-        FontMetrics fm = g.getFontMetrics(g.getFont());
-
-        // Get the width of the string
-        int stringWidth = fm.stringWidth(this.text);
-        int stringHeight = fm.getHeight();
+        double hoverScalar = 1.05;
 
         if(mousedOver(mx, my) && click) {
             g.setColor(clickedColor);
@@ -39,13 +40,37 @@ public class Button {
         } else {
             g.setColor(color);
         }
+        int w = (mousedOver(mx, my)) ? (int) Math.round(width * hoverScalar) : width;
+        int h = (mousedOver(mx, my)) ? (int) Math.round(height * hoverScalar) : height;
+        int xShift = mousedOver(mx, my) ? (width - w) / 2 : 0;
+        int yShift = mousedOver(mx, my) ? (height - h) / 2 : 0;
 
-        g.fillRect(x, y, width, height);
+        g.fillRect(aX + xShift, aY + yShift, w, h);
 
-        g.setColor(Color.black);
-        int stringX = x + (width / 2) - (stringWidth / 2);
-        int stringY = y + (height / 2) + (stringHeight / 4);
+        if (mousedOver(mx, my)) { setFontSize((int) (baseFontSize * hoverScalar)); } else { setFontSize(baseFontSize); }
+
+        // Get the FontMetrics for the current font
+        FontMetrics fm = g.getFontMetrics(g.getFont());
+
+        // Get the width of the string
+        int stringWidth = fm.stringWidth(this.text);
+        int stringHeight = fm.getHeight();
+
+        g.setColor(textColor);
+        int stringX = aX + xShift + (w / 2) - (stringWidth / 2);
+        int stringY = aY + yShift + (h / 2) + (stringHeight / 4);
+
         g.drawString(this.text, stringX, stringY);
+    }
+
+    public void setMode(int mode) {
+        if(mode == 0) {
+            aX = x;
+            aY = y;
+        } else if (mode == 1) {
+            aX = x - (width / 2);
+            aY = y - (height / 2);
+        }
     }
 
     /**
@@ -53,9 +78,9 @@ public class Button {
      * @return True if mouse is over button, false otherwise.
      */
     public boolean mousedOver(int mx, int my) {
-        int yOffset = 30;
-        boolean xBoundry = mx > x && mx < x + width;
-        boolean yBoundry = my > y + yOffset && my < y + height + yOffset;
+        int yOffset = 0;
+        boolean xBoundry = mx > aX && mx < aX + width;
+        boolean yBoundry = my > aY + yOffset && my < aY + height + yOffset;
 
         return xBoundry && yBoundry;
     }
@@ -84,5 +109,13 @@ public class Button {
      */
     public void setText(String text){
         this.text = text;
+    }
+    public void setTextColor(Color color) {
+        this.textColor = color;
+    }
+
+    public String toString() {
+        String mode = aX == x ? "Corner" : "Center";
+        return String.format("X: %d, Y: %d, Width: %d, Height: %d, Text: %s, Drawing Mode: %s\nColors: [%s, %s, %s, %s]", x, y, width, height, text, mode, color, mouseOverColor, clickedColor, textColor);
     }
 }

@@ -27,7 +27,7 @@ public class ImageHandler {
             outputLog = "Image Loaded!";
             isError = false;
 
-            generateScaledImage(150, 150);
+            generateScaledImage(250, 250);
         } catch (IOException e) {
             isError = true;
             outputLog = e.getMessage();

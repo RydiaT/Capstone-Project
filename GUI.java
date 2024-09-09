@@ -5,7 +5,19 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class GUI extends JPanel implements MouseMotionListener, MouseListener {
-    Button testButton = new Button(300, 50, 400, 300, Color.red, "Load Image", 25);
+    // Colors
+    Color backgroundColor = new Color(94, 102, 102);
+    Color textColor = new Color(245, 228, 152);
+    Color buttonColor1 = new Color(100, 100, 100);
+    Color buttonColor2 = new Color(75, 75, 75);
+    Color buttonColor3 = new Color(120, 120, 120);
+    Color buttonColor4 = new Color(185, 144, 49);
+    Color logError = new Color(250, 165, 165);
+    Color logSuccess = new Color(204, 247, 171);
+    Color checkered1 = new Color(56, 56, 56);
+    Color checkered2 = new Color(84, 84, 84);
+
+    Button testButton = new Button(300, 50, 160, 500, buttonColor1, "Load Image", 25);
     JTextField textField = new JTextField("\"D:\\2020-Projects\\Java\\School\\Legally Distinct Mon\\Mon Images\\Sparky.png\"");
     int mouseX, mouseY = 0;
     boolean isClicking = false;
@@ -17,7 +29,7 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
         setLayout(null);
 
         // Set JTextField properties and position
-        textField.setBounds(250, 200, 300, 30);  // (x, y, width, height)
+        textField.setBounds(10, 420, 300, 30);  // (x, y, width, height)
         add(textField);
 
         // Add mouse listeners
@@ -39,13 +51,15 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
             drawLog(g2d);
         }
 
+        drawGrid(g2d);
+
         if(handler.getImage() != null) {
             drawImage(g2d);
         }
     }
 
     public void setup(Graphics2D g) {
-        g.setColor(Color.white);
+        g.setColor(backgroundColor);
         g.fillRect(0, 0, getWidth(), getHeight());
         // Enable Anti-Aliasing for shapes
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -58,8 +72,8 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
 
     public void drawButtons(Graphics2D g) {
         testButton.setGraphics(g);
-        testButton.setSpecialColors(Color.blue, Color.yellow);
-        testButton.setTextColor(Color.orange);
+        testButton.setSpecialColors(buttonColor2, buttonColor3, buttonColor4);
+        testButton.setTextColor(textColor);
         testButton.setMode(1);
         testButton.draw(mouseX, mouseY, isClicking);
         // print(testButton);
@@ -68,7 +82,7 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     public void drawHelpText(Graphics2D g) {
         String[] info = new String[]{"Hello!", "Please enter the full path to the image!", "Click the 'Done' Button to get your image processed!", "It will appear as '(original-name)'-2", "in the same folder."};
 
-        g.setColor(Color.black);
+        g.setColor(textColor);
         g.setFont(new Font("Comfortta", Font.PLAIN, 20));
 
         for(int i = 0; i < info.length; i++) {
@@ -78,15 +92,38 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
 
     public void drawLog(Graphics2D g) {
         g.setFont(new Font("Comfortta", Font.PLAIN, 20));
-        Color logColor = handler.isError() ? Color.red : Color.green;
+        Color logColor = handler.isError() ? logError : logSuccess;
 
         g.setColor(logColor);
 
-        g.drawString(handler.getLog(), (getWidth() / 2) - (g.getFontMetrics().stringWidth(handler.getLog()) / 2), 400);
+        g.drawString(handler.getLog(), (getWidth() / 2) - (g.getFontMetrics().stringWidth(handler.getLog()) / 2), 450);
     }
 
     public void drawImage(Graphics2D g) {
-        g.drawImage(handler.getImage(), 300, 400, this);
+        g.drawImage(handler.getImage(), (getWidth() / 2) - 125, 150, this);
+    }
+
+    public void drawGrid(Graphics2D g) {
+        int size = 250;
+        int rows = 10;
+        int s = size / rows;
+        int initialX = (getWidth() / 2) - 125;
+        int initialY = 150;
+
+        boolean flipFlop = false;
+
+        for(int i = 0; i < rows; i++) {
+            flipFlop = i % 2 == 0;
+
+            for(int j = 0; j < rows; j++) {
+                Color color = flipFlop ? checkered1 : checkered2;
+
+                g.setColor(color);
+                g.fillRect(initialX + (s * i), initialY + (s * j), s, s);
+
+                flipFlop = !flipFlop;
+            }
+        }
     }
 
     // Mouse Listeners

@@ -5,7 +5,7 @@ public class Button {
     private int width, height;
     public int x, y;
     private int aX, aY;
-    private Color color, mouseOverColor, clickedColor, textColor;
+    private Color color, mouseOverColor, clickedColor, textColor, outlineColor;
     private String text;
     private int baseFontSize;
 
@@ -32,6 +32,22 @@ public class Button {
      */
     public void draw(int mx, int my, boolean click) {
         double hoverScalar = 1.05;
+        int outlineThickness = 10;
+
+        int w = (mousedOver(mx, my)) ? (int) Math.round(width * hoverScalar) : width;
+        int h = (mousedOver(mx, my)) ? (int) Math.round(height * hoverScalar) : height;
+
+        int oW = w + outlineThickness;
+        int oH = h + outlineThickness;
+
+        int xShift = mousedOver(mx, my) ? (width - w) / 2 : 0;
+        int yShift = mousedOver(mx, my) ? (height - h) / 2 : 0;
+
+        int xOutline = (width - oW) / 2;
+        int yOutline = (height - oH) / 2;
+
+        g.setColor(outlineColor);
+        g.fillRect(aX + xOutline, aY + yOutline, oW,  oH);
 
         if(mousedOver(mx, my) && click) {
             g.setColor(clickedColor);
@@ -40,12 +56,8 @@ public class Button {
         } else {
             g.setColor(color);
         }
-        int w = (mousedOver(mx, my)) ? (int) Math.round(width * hoverScalar) : width;
-        int h = (mousedOver(mx, my)) ? (int) Math.round(height * hoverScalar) : height;
-        int xShift = mousedOver(mx, my) ? (width - w) / 2 : 0;
-        int yShift = mousedOver(mx, my) ? (height - h) / 2 : 0;
 
-        g.fillRect(aX + xShift, aY + yShift, w, h);
+        g.fillRect(aX + xShift, aY + yShift, w,  h);
 
         if (mousedOver(mx, my)) { setFontSize((int) (baseFontSize * hoverScalar)); } else { setFontSize(baseFontSize); }
 
@@ -98,9 +110,10 @@ public class Button {
      * @param mouseOver Color when mouse hovering
      * @param clicked Color when clicked
      */
-    public void setSpecialColors(Color mouseOver, Color clicked) {
+    public void setSpecialColors(Color mouseOver, Color clicked, Color outline) {
         this.mouseOverColor = mouseOver;
         this.clickedColor = clicked;
+        this.outlineColor = outline;
     }
 
     /**

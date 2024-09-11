@@ -17,8 +17,10 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     Color checkered1 = new Color(56, 56, 56);
     Color checkered2 = new Color(84, 84, 84);
 
-    Button testButton = new Button(300, 50, 160, 500, buttonColor1, "Load Image", 25);
-    JTextField textField = new JTextField("\"D:\\2020-Projects\\Java\\School\\Legally Distinct Mon\\Mon Images\\Sparky.png\"");
+    Button loadImage = new Button(300, 50, 160, 500, buttonColor1, "Load Image", 25);
+    Button processImage = new Button(300, 50, 620, 500, buttonColor1, "Process Image", 25);
+    Button saveImage = new Button(150, 50, 390, 500, buttonColor1, "Save Image", 20);
+    JTextField textField = new JTextField("");
     int mouseX, mouseY = 0;
     boolean isClicking = false;
 
@@ -71,16 +73,20 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     }
 
     public void drawButtons(Graphics2D g) {
-        testButton.setGraphics(g);
-        testButton.setSpecialColors(buttonColor2, buttonColor3, buttonColor4);
-        testButton.setTextColor(textColor);
-        testButton.setMode(1);
-        testButton.draw(mouseX, mouseY, isClicking);
+        Button[] buttons = new Button[]{loadImage, processImage, saveImage};
+
+        for(Button button : buttons) {
+            button.setGraphics(g);
+            button.setSpecialColors(buttonColor2, buttonColor3, buttonColor4);
+            button.setMode(1);
+            button.setTextColor(textColor);
+            button.draw(mouseX, mouseY, isClicking);
+        }
         // print(testButton);
     }
 
     public void drawHelpText(Graphics2D g) {
-        String[] info = new String[]{"Hello!", "Please enter the full path to the image!", "Click the 'Done' Button to get your image processed!", "It will appear as '(original-name)'-2", "in the same folder."};
+        String[] info = new String[]{"Hello!", "Please enter the full path to the image!", "Click Load, then Process, and then Save.", "It will appear as '(original-name)'-2", "in the same folder."};
 
         g.setColor(textColor);
         g.setFont(new Font("Comfortta", Font.PLAIN, 20));
@@ -138,7 +144,7 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         // List of avaliable buttons
-        Button[] buttons = new Button[]{testButton};
+        Button[] buttons = new Button[]{loadImage, processImage, saveImage};
         // Currently clicked button
         int buttonID = -1;
 
@@ -152,6 +158,12 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
             case 0:
                 handler.setFilepath(textField.getText());
                 handler.loadImage();
+                break;
+            case 1:
+                handler.methodOne();
+                break;
+            case 2:
+                handler.saveImage();
                 break;
             default:
                 print("No button selected!");
@@ -195,14 +207,14 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
 
     }
 
-    public static void print(Object o) {
-        System.out.println(o);
-    }
-
     @Override
     public void mouseReleased(MouseEvent e) {
         // if(isClicking) { isClicking = false; repaint(); }
 
         // print("Is Clicking: " + isClicking);
+    }
+
+    public static void print(Object o) {
+        System.out.println(o);
     }
 }

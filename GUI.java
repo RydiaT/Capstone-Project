@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Arrays;
 
 public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     // Colors
@@ -160,7 +161,10 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
                 handler.loadImage();
                 break;
             case 1:
-                handler.methodOne();
+                String filepath = "C:\\Users\\rydia\\OneDrive\\Pictures\\ormang.jpg";
+                Pattern pattern = new Pattern(10, 10, filepath);
+
+                handler.stamp(pattern);
                 break;
             case 2:
                 handler.saveImage();

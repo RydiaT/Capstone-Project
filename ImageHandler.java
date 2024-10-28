@@ -117,13 +117,7 @@ public class ImageHandler {
                 rgb[2] += (int) Math.floor(Math.random() * shiftStrength);
                 rgb[3] += (int) Math.floor(Math.random() * shiftStrength);
 
-                for(int c = 0; c < 3; c++) {
-                    if (rgb[c] > 255) { rgb[c] = 255; }
-                }
-
-                int newRgb = (rgb[0] << 24) | (rgb[1] << 16) | (rgb[2] << 8) | rgb[3];
-
-                dummyImage.setRGB(i, j, newRgb);
+                capRGB(dummyImage, i, j, rgb);
             }
         }
 
@@ -146,18 +140,98 @@ public class ImageHandler {
                 rgb[2] = newGreen;
                 rgb[3] = newBlue;
 
-                for(int c = 0; c < 3; c++) {
-                    if (rgb[c] > 255) { rgb[c] = 255; }
-                }
-
-                int newRgb = (rgb[0] << 24) | (rgb[1] << 16) | (rgb[2] << 8) | rgb[3];
-
-                dummyImage.setRGB(i, j, newRgb);
+                capRGB(dummyImage, i, j, rgb);
             }
         }
 
         filteredImage = dummyImage;
         generateScaledImage(dummyImage, 250, 250);
+    }
+
+    public void tint(int mode) {
+        BufferedImage dummyImage = cloneImage(image);
+        double tintStrength = 2;
+
+        if(mode > 2 || mode < 0) { mode = 0; }
+
+        mode++;
+
+        for(int i = 0; i < dummyImage.getWidth(); i++) {
+            for(int j = 0; j < dummyImage.getHeight(); j++) {
+                int[] rgb = getRGB(dummyImage, i, j);
+
+                rgb[mode] = (int) (rgb[mode] * tintStrength);
+
+                capRGB(dummyImage, i, j, rgb);
+            }
+        }
+
+        filteredImage = dummyImage;
+        generateScaledImage(dummyImage, 250, 250);
+    }
+
+    public void stamp() {
+        BufferedImage dummyImage = cloneImage(image);
+        double opacity = 0.2;
+
+        Pattern pattern = new Pattern(10, 10);
+
+        for(int i = 0; i < dummyImage.getWidth(); i++) {
+            for(int j = 0; j < dummyImage.getHeight(); j++) {
+                int[] rgb = getRGB(dummyImage, i, j);
+
+                int sX = i % 10;
+                int sY = j % 10;
+
+                int[] sRGB = pattern.getPixel(sX, sY);
+
+                int newRed = (int) Math.round(opacity * sRGB[0] + (1 - opacity) * rgb[1]);
+                int newGreen = (int) Math.round(opacity * sRGB[1] + (1 - opacity) * rgb[2]);
+                int newBlue = (int) Math.round(opacity * sRGB[2] + (1 - opacity) * rgb[3]);
+
+                int[] newRGB = new int[]{newRed, newGreen, newBlue, 255};
+
+                capRGB(dummyImage, i, j, newRGB);
+            }
+        }
+        filteredImage = dummyImage;
+        generateScaledImage(dummyImage, 250, 250);
+    }
+
+    public void stamp(Pattern pattern) {
+        BufferedImage dummyImage = cloneImage(image);
+        double opacity = 0.1;
+
+        for(int i = 0; i < dummyImage.getWidth(); i++) {
+            for(int j = 0; j < dummyImage.getHeight(); j++) {
+                int[] rgb = getRGB(dummyImage, i, j);
+
+                int sX = i % pattern.getRows();
+                int sY = j % pattern.getCols();
+
+                int[] sRGB = pattern.getPixel(sX, sY);
+
+                int newRed = (int) Math.round(opacity * sRGB[0] + (1 - opacity) * rgb[1]);
+                int newGreen = (int) Math.round(opacity * sRGB[1] + (1 - opacity) * rgb[2]);
+                int newBlue = (int) Math.round(opacity * sRGB[2] + (1 - opacity) * rgb[3]);
+
+                int[] newRGB = new int[]{newRed, newGreen, newBlue, 255};
+
+                capRGB(dummyImage, i, j, newRGB);
+            }
+        }
+        filteredImage = dummyImage;
+        generateScaledImage(dummyImage, 250, 250);
+    }
+
+    private void capRGB(BufferedImage dummyImage, int i, int j, int[] rgb) {
+        for(int c = 0; c < 3; c++) {
+            if (rgb[c] > 255) { rgb[c] = 255; }
+        }
+
+        int newRgb = (rgb[3] << 24) | (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
+
+        dummyImage.setRGB(i, j, newRgb);
     }
 
     private int[] getRGB(BufferedImage image, int x, int y) {
@@ -184,5 +258,28 @@ public class ImageHandler {
             outputLog = e.getMessage();
         }
 
+    }
+
+    public int[][] getImageRGB() {
+        BufferedImage dummyImage = cloneImage(scaledImage);
+        int width = dummyImage.getWidth();
+        int height = dummyImage.getHeight();
+
+        // Create a 2D array: [total_pixels][3] for RGB values
+        int[][] out = new int[width * height][4];
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                // Extract RGB values for pixel (i, j)
+                int[] rgb = getRGB(dummyImage, i, j);
+
+                // Store RGB values in linear index (i * height + j)
+                out[j * width + i][0] = rgb[1];
+                out[j * width + i][1] = rgb[2];
+                out[j * width + i][2] = rgb[3];
+            }
+        }
+
+        return out;
     }
 }

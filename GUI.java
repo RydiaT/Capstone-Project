@@ -161,7 +161,7 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
                 handler.loadImage();
                 break;
             case 1:
-                String filepath = "C:\\Users\\rydia\\OneDrive\\Pictures\\ormang.jpg";
+                String filepath = "C:\\Users\\rydia\\OneDrive\\Pictures\\oramnge-2.png";
                 Pattern pattern = new Pattern(10, 10, filepath);
 
                 handler.stamp(pattern);

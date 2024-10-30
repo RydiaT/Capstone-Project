@@ -172,7 +172,7 @@ public class ImageHandler {
 
     public void stamp() {
         BufferedImage dummyImage = cloneImage(image);
-        double opacity = 0.2;
+        double opacity = 0.1;
 
         Pattern pattern = new Pattern(10, 10);
 

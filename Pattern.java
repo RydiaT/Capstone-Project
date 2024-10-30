@@ -1,23 +1,25 @@
 public class Pattern {
     private int rows;
     private int cols;
-    private int[][] rgb;
+    private int[][] argb;
 
-    public Pattern(int rows, int cols, int[][] rgb) {
+    public Pattern(int rows, int cols, int[][] argb) {
         this.rows = rows;
         this.cols = cols;
-        this.rgb = rgb;
+        this.argb = argb;
     }
 
     public Pattern(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
 
-        this.rgb = new int[rows * cols][3];
+        this.argb = new int[rows * cols][4];
 
         for (int i = 0; i < rows * cols; i++) {
-            for (int j = 0; j < 3; j++) {
-                rgb[i][j] = (int) (Math.random() * 255);
+            argb[i][0] = 255;
+
+            for (int j = 1; j < 4; j++) {
+                argb[i][j] = (int) (Math.random() * 255);
             }
         }
     }
@@ -31,15 +33,15 @@ public class Pattern {
         temp.loadImage();
         temp.generateScaledImage(temp.getImage(), rows, cols);
 
-        this.rgb = temp.getImageRGB();
+        this.argb = temp.getImageRGB();
     }
 
     public int[][][] toArray() {
-        int[][][] out = new int[rows][cols][3];
+        int[][][] out = new int[rows][cols][4];
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < cols; j++) {
-                for(int k = 0; k < 3; k++) {
-                    out[i][j][k] = rgb[i * cols + j][k];
+                for(int k = 0; k < 4; k++) {
+                    out[i][j][k] = argb[i * cols + j][k];
                 }
             }
         }
@@ -56,7 +58,7 @@ public class Pattern {
     }
 
     public int[][] getRaw() {
-        return rgb;
+        return argb;
     }
 
     public int[] getPixel(int x, int y) {

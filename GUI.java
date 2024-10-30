@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Arrays;
 
 public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     // Colors
@@ -18,12 +17,28 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     Color checkered1 = new Color(56, 56, 56);
     Color checkered2 = new Color(84, 84, 84);
 
+    // GUI Elements
+
+    // Main Screen
     Button loadImage = new Button(300, 50, 160, 500, buttonColor1, "Load Image", 25);
     Button processImage = new Button(300, 50, 620, 500, buttonColor1, "Process Image", 25);
     Button saveImage = new Button(150, 50, 390, 500, buttonColor1, "Save Image", 20);
-    JTextField textField = new JTextField("");
+    Button optionsMenu = new Button(150, 25, 80, 20, buttonColor1, "Options", 20);
+
+    JTextField imageInput = new JTextField("");
+
+    // Options
+    Button setPatternImage = new Button(150, 25, 180, 300, buttonColor1, "Set Pattern Image", 15);
+    String[] filterText = new String[]{"Random Pattern", "Image Pattern", "Random Shift", "Greyscale", "Sepia", "Red Shift", "Blue Shift", "Green Shift"};
+    Radio filters = new Radio(20, 450, 200, 25, textColor, filterText);
+    JTextField patternInput = new JTextField("");
+    Button back = new Button(150, 25, 80, 20, buttonColor1, "Back", 20);
+
+    // Thingamajigs
     int mouseX, mouseY = 0;
     boolean isClicking = false;
+    int state = 0;
+    String pattern = "";
 
     ImageHandler handler = new ImageHandler();
 
@@ -32,8 +47,8 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
         setLayout(null);
 
         // Set JTextField properties and position
-        textField.setBounds(10, 420, 300, 30);  // (x, y, width, height)
-        add(textField);
+        imageInput.setBounds(10, 420, 300, 30); // (x, y, width, height)
+        patternInput.setBounds(100, 250, 300, 30);
 
         // Add mouse listeners
         addMouseListener(this);
@@ -46,19 +61,47 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
 
         setup(g2d);
 
-        drawButtons(g2d);
-        add(textField);
-        drawHelpText(g2d);
+        if(state == 0) {
+            drawButtons(g2d);
+            add(imageInput);
+            drawHelpText(g2d);
 
-        if(!handler.getLog().isEmpty()) {
-            drawLog(g2d);
+            if(!handler.getLog().isEmpty()) {
+                drawLog(g2d);
+            }
+
+            drawGrid(g2d);
+
+            if(handler.getImage() != null) {
+                drawImage(g2d);
+            }
+        } else if (state == 1) {
+            drawSettings(g2d);
+            add(patternInput);
         }
 
-        drawGrid(g2d);
 
-        if(handler.getImage() != null) {
-            drawImage(g2d);
+    }
+
+    public void drawSettings(Graphics2D g) {
+        filters.setGraphics(g);
+        filters.setColors(checkered1, textColor);
+
+        filters.draw();
+
+        Button[] buttons = new Button[]{setPatternImage, back};
+
+        for(Button button : buttons) {
+            button.setGraphics(g);
+            button.setSpecialColors(buttonColor2, buttonColor3, buttonColor4);
+            button.setMode(1);
+            button.setTextColor(textColor);
+            button.draw(mouseX, mouseY, isClicking);
         }
+
+        g.setColor(textColor);
+        g.setFont(new Font("Comfortta", Font.PLAIN, 20));
+        g.drawString("Full Image Filepath for Image Pattern: ", 100, 245);
     }
 
     public void setup(Graphics2D g) {
@@ -71,10 +114,13 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         // handler.setGraphics(g);
+
+        remove(imageInput);
+        remove(patternInput);
     }
 
     public void drawButtons(Graphics2D g) {
-        Button[] buttons = new Button[]{loadImage, processImage, saveImage};
+        Button[] buttons = new Button[]{loadImage, processImage, saveImage, optionsMenu};
 
         for(Button button : buttons) {
             button.setGraphics(g);
@@ -145,7 +191,13 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         // List of avaliable buttons
-        Button[] buttons = new Button[]{loadImage, processImage, saveImage};
+        Button[] buttons = new Button[0];
+
+        if (state == 0) {
+            buttons = new Button[]{loadImage, processImage, saveImage, optionsMenu};
+        } else if (state == 1) {
+            buttons = new Button[]{setPatternImage, back};
+        }
         // Currently clicked button
         int buttonID = -1;
 
@@ -157,22 +209,68 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
         // Carry out "on click" events.
         switch(buttonID) {
             case 0:
-                handler.setFilepath(textField.getText());
-                handler.loadImage();
+                if(state == 0) {
+                    handler.setFilepath(imageInput.getText());
+                    handler.loadImage();
+                } else if(state == 1) {
+                    pattern = patternInput.getText();
+                }
                 break;
             case 1:
-                String filepath = "C:\\Users\\rydia\\OneDrive\\Pictures\\oramnge-2.png";
-                Pattern pattern = new Pattern(10, 10, filepath);
-
-                handler.stamp(pattern);
+                if(state == 0) {
+                    switch(filters.getSelected()) {
+                        case 0:
+                            handler.stamp();
+                            break;
+                        case 1:
+                            Pattern stamp = new Pattern(10, 10, pattern);
+                            handler.stamp(stamp);
+                            break;
+                        case 2:
+                            handler.methodOne();
+                            break;
+                        case 3:
+                            handler.greyScale();
+                            break;
+                        case 4:
+                            handler.sepia();
+                            break;
+                        case 5:
+                            handler.tint(0);
+                            break;
+                        case 6:
+                            handler.tint(1);
+                            break;
+                        case 7:
+                            handler.tint(2);
+                            break;
+                        default:
+                            print("No Filter Set!");
+                            break;
+                    }
+                } else if(state == 1) {
+                    state = 0;
+                }
                 break;
             case 2:
                 handler.saveImage();
+                break;
+            case 3:
+                state = 1;
                 break;
             default:
                 print("No button selected!");
                 break;
         }
+
+        if(state == 1) {
+            int selected = filters.getHoveredCircle(e.getX(), e.getY());
+
+            if(selected != -1 && isClicking) {
+                filters.setSelected(selected);
+            }
+        }
+
 
         isClicking = false;
 

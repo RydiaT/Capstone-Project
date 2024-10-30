@@ -23,16 +23,16 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
     Button loadImage = new Button(300, 50, 160, 500, buttonColor1, "Load Image", 25);
     Button processImage = new Button(300, 50, 620, 500, buttonColor1, "Process Image", 25);
     Button saveImage = new Button(150, 50, 390, 500, buttonColor1, "Save Image", 20);
-    Button optionsMenu = new Button(300, 50, 160, 150, buttonColor1, "Options", 25);
+    Button optionsMenu = new Button(150, 25, 80, 20, buttonColor1, "Options", 20);
 
     JTextField imageInput = new JTextField("");
 
     // Options
-    Button setPatternImage = new Button(300, 50, 160, 500, buttonColor1, "Set Pattern Image", 25);
+    Button setPatternImage = new Button(150, 25, 180, 300, buttonColor1, "Set Pattern Image", 15);
     String[] filterText = new String[]{"Random Pattern", "Image Pattern", "Random Shift", "Greyscale", "Sepia", "Red Shift", "Blue Shift", "Green Shift"};
-    Radio filters = new Radio(20, 350, 350, 25, textColor, filterText);
+    Radio filters = new Radio(20, 450, 200, 25, textColor, filterText);
     JTextField patternInput = new JTextField("");
-    Button back = new Button(300, 50, 160, 150, buttonColor1, "Back", 25);
+    Button back = new Button(150, 25, 80, 20, buttonColor1, "Back", 20);
 
     // Thingamajigs
     int mouseX, mouseY = 0;
@@ -48,7 +48,7 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
 
         // Set JTextField properties and position
         imageInput.setBounds(10, 420, 300, 30); // (x, y, width, height)
-        patternInput.setBounds(30, 300, 300, 30);
+        patternInput.setBounds(100, 250, 300, 30);
 
         // Add mouse listeners
         addMouseListener(this);
@@ -98,6 +98,10 @@ public class GUI extends JPanel implements MouseMotionListener, MouseListener {
             button.setTextColor(textColor);
             button.draw(mouseX, mouseY, isClicking);
         }
+
+        g.setColor(textColor);
+        g.setFont(new Font("Comfortta", Font.PLAIN, 20));
+        g.drawString("Full Image Filepath for Image Pattern: ", 100, 245);
     }
 
     public void setup(Graphics2D g) {

@@ -185,9 +185,9 @@ public class ImageHandler {
 
                 int[] sRGB = pattern.getPixel(sX, sY);
 
-                int newRed = (int) Math.round(opacity * sRGB[0] + (1 - opacity) * rgb[1]);
-                int newGreen = (int) Math.round(opacity * sRGB[1] + (1 - opacity) * rgb[2]);
-                int newBlue = (int) Math.round(opacity * sRGB[2] + (1 - opacity) * rgb[3]);
+                int newRed = (int) Math.round(opacity * sRGB[1] + (1 - opacity) * rgb[1]);
+                int newGreen = (int) Math.round(opacity * sRGB[2] + (1 - opacity) * rgb[2]);
+                int newBlue = (int) Math.round(opacity * sRGB[3] + (1 - opacity) * rgb[3]);
 
                 int[] newRGB = new int[]{newRed, newGreen, newBlue, 255};
 
@@ -211,9 +211,9 @@ public class ImageHandler {
 
                 int[] sRGB = pattern.getPixel(sX, sY);
 
-                int newRed = (int) Math.round(opacity * sRGB[0] + (1 - opacity) * rgb[1]);
-                int newGreen = (int) Math.round(opacity * sRGB[1] + (1 - opacity) * rgb[2]);
-                int newBlue = (int) Math.round(opacity * sRGB[2] + (1 - opacity) * rgb[3]);
+                int newRed = (int) Math.round(opacity * sRGB[1] + (1 - opacity) * rgb[1]);
+                int newGreen = (int) Math.round(opacity * sRGB[2] + (1 - opacity) * rgb[2]);
+                int newBlue = (int) Math.round(opacity * sRGB[3] + (1 - opacity) * rgb[3]);
 
                 int[] newRGB = new int[]{newRed, newGreen, newBlue, 255};
 
@@ -225,7 +225,7 @@ public class ImageHandler {
     }
 
     private void capRGB(BufferedImage dummyImage, int i, int j, int[] rgb) {
-        for(int c = 0; c < 3; c++) {
+        for(int c = 0; c < 4; c++) {
             if (rgb[c] > 255) { rgb[c] = 255; }
         }
 
@@ -274,9 +274,10 @@ public class ImageHandler {
                 int[] rgb = getRGB(dummyImage, i, j);
 
                 // Store RGB values in linear index (i * height + j)
-                out[j * width + i][0] = rgb[1];
-                out[j * width + i][1] = rgb[2];
-                out[j * width + i][2] = rgb[3];
+                out[j * width + i][0] = rgb[0];
+                out[j * width + i][1] = rgb[1];
+                out[j * width + i][2] = rgb[2];
+                out[j * width + i][3] = rgb[3];
             }
         }
 

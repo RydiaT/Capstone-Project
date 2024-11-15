@@ -3,7 +3,7 @@ model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
 model.eval()
 import urllib
 
-filename = "/Users/ryanchang/Capstone-Project/balloon2.jpeg"
+filename = "/Users/ryanchang/Capstone-Project/apple.jpeg"
 
 from PIL import Image
 from torchvision import transforms

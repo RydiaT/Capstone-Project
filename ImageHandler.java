@@ -260,6 +260,20 @@ public class ImageHandler {
 
     }
 
+    public void saveImage(String folder) {
+        try {
+            File output = new File(folder + "\\" + fileName + "-2" + fileType);
+
+            ImageIO.write(filteredImage, fileType.substring(1), output);
+            isError = false;
+            outputLog = "Image Saved!";
+        } catch (IOException e) {
+            isError = true;
+            outputLog = e.getMessage();
+        }
+
+    }
+
     public int[][] getImageRGB() {
         BufferedImage dummyImage = cloneImage(scaledImage);
         int width = dummyImage.getWidth();
